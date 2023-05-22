@@ -1,42 +1,30 @@
-import type { AppRouteRecordRaw, Menu } from '/@/router/types';
+import type { AppRouteRecordRaw, Menu } from '@/router/types';
 
 import { defineStore } from 'pinia';
-import { store } from '/@/store';
-import { useI18n } from '/@/hooks/web/useI18n';
+import { store } from '@/store';
 import { useUserStore } from './user';
 import { useAppStoreWithOut } from './app';
 import { toRaw } from 'vue';
-import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
-import { transformRouteToMenu } from '/@/router/helper/menuHelper';
+import { flatMultiLevelRoutes } from '@/router/helper/routeHelper';
+import { transformRouteToMenu } from '@/router/helper/menuHelper';
 
-import projectSetting from '/@/settings/projectSetting';
+import projectSetting from '@/settings/projectSetting';
 
-import { PermissionModeEnum } from '/@/enums/appEnum';
+import { PermissionModeEnum } from '@/enums/appEnum';
 
-import { asyncRoutes } from '/@/router/routes';
-import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
+import { asyncRoutes } from '@/router/routes';
 
-import { filter } from '/@/utils/helper/treeHelper';
+import { filter } from '@/utils/helper/treeHelper';
 
-import { getMenuList } from '/@/api/sys/menu';
-import { getPermCode } from '/@/api/sys/user';
-
-import { useMessage } from '/@/hooks/web/useMessage';
-import { PageEnum } from '/@/enums/pageEnum';
+import { PageEnum } from '@/enums/pageEnum';
 
 interface PermissionState {
-  // Permission code list
-  // 权限代码列表
-  permCodeList: string[] | number[];
   // Whether the route has been dynamically added
   // 路由是否动态添加
   isDynamicAddedRoute: boolean;
   // To trigger a menu update
   // 触发菜单更新
   lastBuildMenuTime: number;
-  // Backstage menu list
-  // 后台菜单列表
-  backMenuList: Menu[];
   // 菜单列表
   frontMenuList: Menu[];
 }
@@ -44,48 +32,28 @@ interface PermissionState {
 export const usePermissionStore = defineStore({
   id: 'app-permission',
   state: (): PermissionState => ({
-    // 权限代码列表
-    permCodeList: [],
     // Whether the route has been dynamically added
     // 路由是否动态添加
     isDynamicAddedRoute: false,
     // To trigger a menu update
     // 触发菜单更新
     lastBuildMenuTime: 0,
-    // Backstage menu list
-    // 后台菜单列表
-    backMenuList: [],
     // menu List
     // 菜单列表
     frontMenuList: [],
   }),
   getters: {
-    getPermCodeList(): string[] | number[] {
-      return this.permCodeList;
+    getFrontMenuList(state): Menu[] {
+      return state.frontMenuList;
     },
-    getBackMenuList(): Menu[] {
-      return this.backMenuList;
+    getLastBuildMenuTime(state): number {
+      return state.lastBuildMenuTime;
     },
-    getFrontMenuList(): Menu[] {
-      return this.frontMenuList;
-    },
-    getLastBuildMenuTime(): number {
-      return this.lastBuildMenuTime;
-    },
-    getIsDynamicAddedRoute(): boolean {
-      return this.isDynamicAddedRoute;
+    getIsDynamicAddedRoute(state): boolean {
+      return state.isDynamicAddedRoute;
     },
   },
   actions: {
-    setPermCodeList(codeList: string[]) {
-      this.permCodeList = codeList;
-    },
-
-    setBackMenuList(list: Menu[]) {
-      this.backMenuList = list;
-      list?.length > 0 && this.setLastBuildMenuTime();
-    },
-
     setFrontMenuList(list: Menu[]) {
       this.frontMenuList = list;
     },
@@ -99,18 +67,11 @@ export const usePermissionStore = defineStore({
     },
     resetState(): void {
       this.isDynamicAddedRoute = false;
-      this.permCodeList = [];
-      this.backMenuList = [];
       this.lastBuildMenuTime = 0;
-    },
-    async changePermissionCode() {
-      const codeList = await getPermCode();
-      this.setPermCodeList(codeList);
     },
 
     // 构建路由
     async buildRoutesAction(): Promise<AppRouteRecordRaw[]> {
-      const { t } = useI18n();
       const userStore = useUserStore();
       const appStore = useAppStoreWithOut();
 
@@ -141,7 +102,7 @@ export const usePermissionStore = defineStore({
        * */
       const patchHomeAffix = (routes: AppRouteRecordRaw[]) => {
         if (!routes || routes.length === 0) return;
-        let homePath: string = userStore.getUserInfo.homePath || PageEnum.BASE_HOME;
+        let homePath: string = PageEnum.BASE_HOME;
 
         function patcher(routes: AppRouteRecordRaw[], parentPath = '') {
           if (parentPath) parentPath = parentPath + '/';
@@ -169,17 +130,6 @@ export const usePermissionStore = defineStore({
       };
 
       switch (permissionMode) {
-        // 角色权限
-        case PermissionModeEnum.ROLE:
-          // 对非一级路由进行过滤
-          routes = filter(asyncRoutes, routeFilter);
-          // 对一级路由根据角色权限过滤
-          routes = routes.filter(routeFilter);
-          // Convert multi-level routing to level 2 routing
-          // 将多级路由转换为 2 级路由
-          routes = flatMultiLevelRoutes(routes);
-          break;
-
         // 路由映射， 默认进入该case
         case PermissionModeEnum.ROUTE_MAPPING:
           // 对非一级路由进行过滤
@@ -204,49 +154,8 @@ export const usePermissionStore = defineStore({
           // 将多级路由转换为 2 级路由
           routes = flatMultiLevelRoutes(routes);
           break;
-
-        //  If you are sure that you do not need to do background dynamic permissions, please comment the entire judgment below
-        //  如果确定不需要做后台动态权限，请在下方注释整个判断
-        case PermissionModeEnum.BACK:
-          const { createMessage } = useMessage();
-
-          createMessage.loading({
-            content: t('sys.app.menuLoading'),
-            duration: 1,
-          });
-
-          // !Simulate to obtain permission codes from the background,
-          // 模拟从后台获取权限码，
-          // this function may only need to be executed once, and the actual project can be put at the right time by itself
-          // 这个功能可能只需要执行一次，实际项目可以自己放在合适的时间
-          let routeList: AppRouteRecordRaw[] = [];
-          try {
-            await this.changePermissionCode();
-            routeList = (await getMenuList()) as AppRouteRecordRaw[];
-          } catch (error) {
-            console.error(error);
-          }
-
-          // Dynamically introduce components
-          // 动态引入组件
-          routeList = transformObjToRoute(routeList);
-
-          //  Background routing to menu structure
-          //  后台路由到菜单结构
-          const backMenuList = transformRouteToMenu(routeList);
-          this.setBackMenuList(backMenuList);
-
-          // remove meta.ignoreRoute item
-          // 删除 meta.ignoreRoute 项
-          routeList = filter(routeList, routeRemoveIgnoreFilter);
-          routeList = routeList.filter(routeRemoveIgnoreFilter);
-
-          routeList = flatMultiLevelRoutes(routeList);
-          routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
-          break;
       }
 
-      routes.push(ERROR_LOG_ROUTE);
       patchHomeAffix(routes);
       return routes;
     },

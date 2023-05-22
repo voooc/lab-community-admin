@@ -21,19 +21,20 @@
 
   import { CopyOutlined, RedoOutlined } from '@ant-design/icons-vue';
 
-  import { useAppStore } from '/@/store/modules/app';
-  import { usePermissionStore } from '/@/store/modules/permission';
-  import { useMultipleTabStore } from '/@/store/modules/multipleTab';
-  import { useUserStore } from '/@/store/modules/user';
+  import { useAppStore } from '@/store/modules/app';
+  import { usePermissionStore } from '@/store/modules/permission';
+  import { useMultipleTabStore } from '@/store/modules/multipleTab';
+  import { useUserStore } from '@/store/modules/user';
 
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
+  import { useDesign } from '@/hooks/web/useDesign';
+  import { useI18n } from '@/hooks/web/useI18n';
+  import { useMessage } from '@/hooks/web/useMessage';
+  import { useCopyToClipboard } from '@/hooks/web/useCopyToClipboard';
 
-  import { updateColorWeak } from '/@/logics/theme/updateColorWeak';
-  import { updateGrayMode } from '/@/logics/theme/updateGrayMode';
-  import defaultSetting from '/@/settings/projectSetting';
+  import { updateColorWeak } from '@/logics/theme/updateColorWeak';
+  import { updateGrayMode } from '@/logics/theme/updateGrayMode';
+  import defaultSetting from '@/settings/projectSetting';
+  import { updateSidebarBgColor } from '@/logics/theme/updateBackground';
 
   export default defineComponent({
     name: 'SettingFooter',
@@ -61,7 +62,7 @@
         try {
           appStore.setProjectConfig(defaultSetting);
           const { colorWeak, grayMode } = defaultSetting;
-          // updateTheme(themeColor);
+          updateSidebarBgColor();
           updateColorWeak(colorWeak);
           updateGrayMode(grayMode);
           createMessage.success(t('layout.setting.resetSuccess'));

@@ -1,5 +1,5 @@
 <template>
-  <Layout :class="prefixCls" v-bind="lockEvents">
+  <Layout :class="prefixCls">
     <LayoutFeatures />
     <LayoutHeader fixed v-if="getShowFullHeaderRef" />
     <Layout :class="[layoutClass]">
@@ -16,25 +16,24 @@
 <script lang="ts">
   import { defineComponent, computed, unref } from 'vue';
   import { Layout } from 'ant-design-vue';
-  import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
+  import { createAsyncComponent } from '@/utils/factory/createAsyncComponent';
 
   import LayoutHeader from './header/index.vue';
   import LayoutContent from './content/index.vue';
   import LayoutSideBar from './sider/index.vue';
   import LayoutMultipleHeader from './header/MultipleHeader.vue';
 
-  import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
-  import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { useLockPage } from '/@/hooks/web/useLockPage';
+  import { useHeaderSetting } from '@/hooks/setting/useHeaderSetting';
+  import { useMenuSetting } from '@/hooks/setting/useMenuSetting';
+  import { useDesign } from '@/hooks/web/useDesign';
 
-  import { useAppInject } from '/@/hooks/web/useAppInject';
+  import { useAppInject } from '@/hooks/web/useAppInject';
 
   export default defineComponent({
     name: 'DefaultLayout',
     components: {
-      LayoutFeatures: createAsyncComponent(() => import('/@/layouts/default/feature/index.vue')),
-      LayoutFooter: createAsyncComponent(() => import('/@/layouts/default/footer/index.vue')),
+      LayoutFeatures: createAsyncComponent(() => import('@/layouts/default/feature/index.vue')),
+      LayoutFooter: createAsyncComponent(() => import('@/layouts/default/footer/index.vue')),
       LayoutHeader,
       LayoutContent,
       LayoutSideBar,
@@ -46,10 +45,6 @@
       const { getIsMobile } = useAppInject();
       const { getShowFullHeaderRef } = useHeaderSetting();
       const { getShowSidebar, getIsMixSidebar, getShowMenu } = useMenuSetting();
-
-      // Create a lock screen monitor
-      const lockEvents = useLockPage();
-
       const layoutClass = computed(() => {
         let cls: string[] = ['ant-layout'];
         if (unref(getIsMixSidebar) || unref(getShowMenu)) {
@@ -65,7 +60,6 @@
         getIsMobile,
         getIsMixSidebar,
         layoutClass,
-        lockEvents,
       };
     },
   });
@@ -75,10 +69,10 @@
 
   .@{prefix-cls} {
     display: flex;
+    flex-direction: column;
     width: 100%;
     min-height: 100%;
     background-color: @content-bg;
-    flex-direction: column;
 
     > .ant-layout {
       min-height: 100%;

@@ -1,21 +1,18 @@
-import type { HeaderSetting } from '/#/config';
+import type { HeaderSetting } from '#/config';
 
 import { computed, unref } from 'vue';
 
-import { useAppStore } from '/@/store/modules/app';
+import { useAppStore } from '@/store/modules/app';
 
-import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
-import { useRootSetting } from '/@/hooks/setting/useRootSetting';
-import { useFullContent } from '/@/hooks/web/useFullContent';
-import { MenuModeEnum } from '/@/enums/menuEnum';
+import { useMenuSetting } from '@/hooks/setting/useMenuSetting';
+import { useRootSetting } from '@/hooks/setting/useRootSetting';
+import { MenuModeEnum } from '@/enums/menuEnum';
 
 export function useHeaderSetting() {
-  const { getFullContent } = useFullContent();
   const appStore = useAppStore();
 
   const getShowFullHeaderRef = computed(() => {
     return (
-      !unref(getFullContent) &&
       unref(getShowMixHeaderRef) &&
       unref(getShowHeader) &&
       !unref(getIsTopMenu) &&
@@ -26,7 +23,7 @@ export function useHeaderSetting() {
   const getUnFixedAndFull = computed(() => !unref(getFixed) && !unref(getShowFullHeaderRef));
 
   const getShowInsetHeaderRef = computed(() => {
-    const need = !unref(getFullContent) && unref(getShowHeader);
+    const need = unref(getShowHeader);
     return (
       (need && !unref(getShowMixHeaderRef)) ||
       (need && unref(getIsTopMenu)) ||
@@ -46,8 +43,6 @@ export function useHeaderSetting() {
 
   const getShowMixHeaderRef = computed(() => !unref(getIsSidebarType) && unref(getShowHeader));
 
-  const getShowDoc = computed(() => appStore.getHeaderSetting.showDoc);
-
   const getHeaderTheme = computed(() => appStore.getHeaderSetting.theme);
 
   const getShowHeader = computed(() => appStore.getHeaderSetting.show);
@@ -55,14 +50,6 @@ export function useHeaderSetting() {
   const getFixed = computed(() => appStore.getHeaderSetting.fixed);
 
   const getHeaderBgColor = computed(() => appStore.getHeaderSetting.bgColor);
-
-  const getShowSearch = computed(() => appStore.getHeaderSetting.showSearch);
-
-  const getUseLockPage = computed(() => appStore.getHeaderSetting.useLockPage);
-
-  const getShowFullScreen = computed(() => appStore.getHeaderSetting.showFullScreen);
-
-  const getShowNotice = computed(() => appStore.getHeaderSetting.showNotice);
 
   const getShowBread = computed(() => {
     return (
@@ -84,13 +71,6 @@ export function useHeaderSetting() {
   }
   return {
     setHeaderSetting,
-
-    getShowDoc,
-    getShowSearch,
-    getHeaderTheme,
-    getUseLockPage,
-    getShowFullScreen,
-    getShowNotice,
     getShowBread,
     getShowContent,
     getShowHeaderLogo,
@@ -101,5 +81,6 @@ export function useHeaderSetting() {
     getShowInsetHeaderRef,
     getUnFixedAndFull,
     getHeaderBgColor,
+    getHeaderTheme,
   };
 }

@@ -17,12 +17,6 @@
           </template>
         </TabPane>
       </template>
-
-      <template #rightExtra v-if="getShowRedo || getShowQuick">
-        <TabRedo v-if="getShowRedo" />
-        <TabContent isExtra :tabItem="$route" v-if="getShowQuick" />
-        <FoldButton v-if="getShowFold" />
-      </template>
     </Tabs>
   </div>
 </template>
@@ -33,28 +27,24 @@
 
   import { Tabs } from 'ant-design-vue';
   import TabContent from './components/TabContent.vue';
-  import FoldButton from './components/FoldButton.vue';
-  import TabRedo from './components/TabRedo.vue';
 
-  import { useGo } from '/@/hooks/web/usePage';
+  import { useGo } from '@/hooks/web/usePage';
 
-  import { useMultipleTabStore } from '/@/store/modules/multipleTab';
-  import { useUserStore } from '/@/store/modules/user';
+  import { useMultipleTabStore } from '@/store/modules/multipleTab';
+  import { useUserStore } from '@/store/modules/user';
 
   import { initAffixTabs, useTabsDrag } from './useMultipleTabs';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { useMultipleTabSetting } from '/@/hooks/setting/useMultipleTabSetting';
+  import { useDesign } from '@/hooks/web/useDesign';
+  import { useMultipleTabSetting } from '@/hooks/setting/useMultipleTabSetting';
 
-  import { REDIRECT_NAME } from '/@/router/constant';
-  import { listenerRouteChange } from '/@/logics/mitt/routeChange';
+  import { REDIRECT_NAME } from '@/router/constant';
+  import { listenerRouteChange } from '@/logics/mitt/routeChange';
 
   import { useRouter } from 'vue-router';
 
   export default defineComponent({
     name: 'MultipleTabs',
     components: {
-      TabRedo,
-      FoldButton,
       Tabs,
       TabPane: Tabs.TabPane,
       TabContent,
@@ -70,7 +60,7 @@
 
       const { prefixCls } = useDesign('multiple-tabs');
       const go = useGo();
-      const { getShowQuick, getShowRedo, getShowFold } = useMultipleTabSetting();
+      const { getShowQuick } = useMultipleTabSetting();
 
       const getTabsState = computed(() => {
         return tabStore.getTabList.filter((item) => !item.meta?.hideTab);
@@ -133,12 +123,10 @@
         activeKeyRef,
         getTabsState,
         getShowQuick,
-        getShowRedo,
-        getShowFold,
       };
     },
   });
 </script>
 <style lang="less">
-  @import './index.less';
+  @import url('./index.less');
 </style>

@@ -69,15 +69,15 @@
     onBeforeMount,
     inject,
   } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { propTypes } from '/@/utils/propTypes';
+  import { useDesign } from '@/hooks/web/useDesign';
+  import { propTypes } from '@/utils/propTypes';
   import { useMenuItem } from './useMenu';
   import { useSimpleRootMenuContext } from './useSimpleMenuContext';
-  import { CollapseTransition } from '/@/components/Transition';
-  import Icon from '/@/components/Icon';
+  import { CollapseTransition } from '@/components/Transition';
+  import Icon from '@/components/Icon/src/Icon.vue';
   import { Popover } from 'ant-design-vue';
-  import { isBoolean, isObject } from '/@/utils/is';
-  import mitt from '/@/utils/mitt';
+  import { isBoolean, isObject } from '@/utils/is';
+  import { mitt } from '@/utils/mitt';
 
   const DELAY = 200;
   export default defineComponent({
@@ -267,14 +267,14 @@
 
         rootMenuEmitter.on(
           'on-update-opened',
-          (data: boolean | (string | number)[] | Recordable) => {
+          (data: boolean | (string | number)[] | Recordable<any>) => {
             if (unref(getCollapse)) return;
             if (isBoolean(data)) {
               state.opened = data;
               return;
             }
             if (isObject(data) && rootProps.accordion) {
-              const { opend, parent, uidList } = data as Recordable;
+              const { opend, parent, uidList } = data as Recordable<any>;
               if (parent === instance?.parent) {
                 state.opened = opend;
               } else if (!uidList.includes(instance?.uid)) {

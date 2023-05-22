@@ -4,18 +4,18 @@ import type {
   MenuSetting,
   TransitionSetting,
   MultiTabsSetting,
-} from '/#/config';
-import type { BeforeMiniState } from '/#/store';
+} from '#/config';
+import type { BeforeMiniState } from '#/store';
 
 import { defineStore } from 'pinia';
-import { store } from '/@/store';
+import { store } from '@/store';
 
-import { ThemeEnum } from '/@/enums/appEnum';
-import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '/@/enums/cacheEnum';
-import { Persistent } from '/@/utils/cache/persistent';
-import { darkMode } from '/@/settings/designSetting';
-import { resetRouter } from '/@/router';
-import { deepMerge } from '/@/utils';
+import { ThemeEnum } from '@/enums/appEnum';
+import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '@/enums/cacheEnum';
+import { Persistent } from '@/utils/cache/persistent';
+import { darkMode } from '@/settings/designSetting';
+import { resetRouter } from '@/router';
+import { deepMerge } from '@/utils';
 
 interface AppState {
   darkMode?: ThemeEnum;
@@ -36,19 +36,19 @@ export const useAppStore = defineStore({
     beforeMiniInfo: {},
   }),
   getters: {
-    getPageLoading(): boolean {
-      return this.pageLoading;
+    getPageLoading(state): boolean {
+      return state.pageLoading;
     },
-    getDarkMode(): 'light' | 'dark' | string {
-      return this.darkMode || localStorage.getItem(APP_DARK_MODE_KEY_) || darkMode;
-    },
-
-    getBeforeMiniInfo(): BeforeMiniState {
-      return this.beforeMiniInfo;
+    getDarkMode(state): 'light' | 'dark' | string {
+      return state.darkMode || localStorage.getItem(APP_DARK_MODE_KEY_) || darkMode;
     },
 
-    getProjectConfig(): ProjectConfig {
-      return this.projectConfig || ({} as ProjectConfig);
+    getBeforeMiniInfo(state): BeforeMiniState {
+      return state.beforeMiniInfo;
+    },
+
+    getProjectConfig(state): ProjectConfig {
+      return state.projectConfig || ({} as ProjectConfig);
     },
 
     getHeaderSetting(): HeaderSetting {

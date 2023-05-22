@@ -19,7 +19,7 @@
     </template>
     <Dropdown
       :trigger="['hover']"
-      :dropMenuList="getDropdownList"
+      :drop-menu-list="getDropdownList"
       popconfirm
       v-if="dropDownActions && getDropdownList.length > 0"
     >
@@ -34,15 +34,13 @@
   import { defineComponent, PropType, computed, toRaw, unref } from 'vue';
   import { MoreOutlined } from '@ant-design/icons-vue';
   import { Divider, Tooltip, TooltipProps } from 'ant-design-vue';
-  import Icon from '/@/components/Icon/index';
-  import { ActionItem, TableActionType } from '/@/components/Table';
-  import { PopConfirmButton } from '/@/components/Button';
-  import { Dropdown } from '/@/components/Dropdown';
-  import { useDesign } from '/@/hooks/web/useDesign';
+  import Icon from '@/components/Icon/index';
+  import { ActionItem, TableActionType } from '@/components/Table';
+  import { PopConfirmButton } from '@/components/Button';
+  import { Dropdown } from '@/components/Dropdown';
   import { useTableContext } from '../hooks/useTableContext';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { isBoolean, isFunction, isString } from '/@/utils/is';
-  import { propTypes } from '/@/utils/propTypes';
+  import { isString } from '@/utils/is';
+  import { propTypes } from '@/utils/propTypes';
   import { ACTION_COLUMN_FLAG } from '../const';
 
   export default defineComponent({
@@ -62,52 +60,30 @@
       stopButtonPropagation: propTypes.bool.def(false),
     },
     setup(props) {
-      const { prefixCls } = useDesign('basic-table-action');
+      const prefixCls = 'basic-table-action';
       let table: Partial<TableActionType> = {};
       if (!props.outside) {
         table = useTableContext();
       }
 
-      const { hasPermission } = usePermission();
-      function isIfShow(action: ActionItem): boolean {
-        const ifShow = action.ifShow;
-
-        let isIfShow = true;
-
-        if (isBoolean(ifShow)) {
-          isIfShow = ifShow;
-        }
-        if (isFunction(ifShow)) {
-          isIfShow = ifShow(action);
-        }
-        return isIfShow;
-      }
-
       const getActions = computed(() => {
-        return (toRaw(props.actions) || [])
-          .filter((action) => {
-            return hasPermission(action.auth) && isIfShow(action);
-          })
-          .map((action) => {
-            const { popConfirm } = action;
-            return {
-              getPopupContainer: () => unref((table as any)?.wrapRef.value) ?? document.body,
-              type: 'link',
-              size: 'small',
-              ...action,
-              ...(popConfirm || {}),
-              onConfirm: popConfirm?.confirm,
-              onCancel: popConfirm?.cancel,
-              enable: !!popConfirm,
-            };
-          });
+        return (toRaw(props.actions) || []).map((action) => {
+          const { popConfirm } = action;
+          return {
+            getPopupContainer: () => unref((table as any)?.wrapRef.value) ?? document.body,
+            type: 'link',
+            size: 'small',
+            ...action,
+            ...(popConfirm || {}),
+            onConfirm: popConfirm?.confirm,
+            onCancel: popConfirm?.cancel,
+            enable: !!popConfirm,
+          };
+        });
       });
 
       const getDropdownList = computed((): any[] => {
-        const list = (toRaw(props.dropDownActions) || []).filter((action) => {
-          return hasPermission(action.auth) && isIfShow(action);
-        });
-        return list.map((action, index) => {
+        return (toRaw(props.dropDownActions) || []).map((action, index) => {
           const { label, popConfirm } = action;
           return {
             ...action,
@@ -115,7 +91,7 @@
             onConfirm: popConfirm?.confirm,
             onCancel: popConfirm?.cancel,
             text: label,
-            divider: index < list.length - 1 ? props.divider : false,
+            divider: index < props.dropDownActions.length - 1 ? props.divider : false,
           };
         });
       });
@@ -148,7 +124,7 @@
   });
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{namespace}-basic-table-action';
+  @prefix-cls: ~'basic-table-action';
 
   .@{prefix-cls} {
     display: flex;

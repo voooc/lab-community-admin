@@ -2,18 +2,18 @@ import type { RouteLocationNormalized, RouteLocationRaw, Router } from 'vue-rout
 
 import { toRaw, unref } from 'vue';
 import { defineStore } from 'pinia';
-import { store } from '/@/store';
+import { store } from '@/store';
 
-import { useGo, useRedo } from '/@/hooks/web/usePage';
-import { Persistent } from '/@/utils/cache/persistent';
+import { useGo, useRedo } from '@/hooks/web/usePage';
+import { Persistent } from '@/utils/cache/persistent';
 
-import { PageEnum } from '/@/enums/pageEnum';
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
-import { getRawRoute } from '/@/utils';
-import { MULTIPLE_TABS_KEY } from '/@/enums/cacheEnum';
+import { PageEnum } from '@/enums/pageEnum';
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '@/router/routes/basic';
+import { getRawRoute } from '@/utils';
+import { MULTIPLE_TABS_KEY } from '@/enums/cacheEnum';
 
-import projectSetting from '/@/settings/projectSetting';
-import { useUserStore } from '/@/store/modules/user';
+import projectSetting from '@/settings/projectSetting';
+import { useUserStore } from '@/store/modules/user';
 
 export interface MultipleTabState {
   cacheTabList: Set<string>;
@@ -48,14 +48,14 @@ export const useMultipleTabStore = defineStore({
     lastDragEndIndex: 0,
   }),
   getters: {
-    getTabList(): RouteLocationNormalized[] {
-      return this.tabList;
+    getTabList(state): RouteLocationNormalized[] {
+      return state.tabList;
     },
-    getCachedTabList(): string[] {
-      return Array.from(this.cacheTabList);
+    getCachedTabList(state): string[] {
+      return Array.from(state.cacheTabList);
     },
-    getLastDragEndIndex(): number {
-      return this.lastDragEndIndex;
+    getLastDragEndIndex(state): number {
+      return state.lastDragEndIndex;
     },
   },
   actions: {

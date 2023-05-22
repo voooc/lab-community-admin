@@ -1,7 +1,7 @@
-import type { GlobConfig } from '/#/config';
+import type { GlobConfig } from '#/config';
 
-import { warn } from '/@/utils/log';
-import { getAppEnvConfig } from '/@/utils/env';
+import { warn } from '@/utils/log';
+import { getAppEnvConfig } from '@/utils/env';
 
 export const useGlobSetting = (): Readonly<GlobConfig> => {
   const {
@@ -28,3 +28,4 @@ export const useGlobSetting = (): Readonly<GlobConfig> => {
   };
   return glob as Readonly<GlobConfig>;
 };
+export const prefixCls = 'value-data-admin';
