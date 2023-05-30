@@ -56,7 +56,7 @@
       title: () => h('span', '提示'),
       content: () => h('span', '确认通过该用户的申请吗？'),
       onOk: async () => {
-        await PutVeify({ id: record.id, username: record.username }, record.id);
+        await PutVeify({ id: record.id, username: record.username, is_active: true }, record.id);
         reload();
       },
     });

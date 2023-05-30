@@ -13,7 +13,7 @@ const dashboard: AppRouteModule = {
   children: [
     {
       path: 'home',
-      name: 'home',
+      name: '分析页',
       component: () => import('@/views/dashboard/index.vue'),
       meta: {
         title: 'home',

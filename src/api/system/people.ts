@@ -14,7 +14,7 @@ export function PutUserInfo(params, id) {
   return defHttp.put({ url: Api.GetSystemUser + id + '/', params });
 }
 export function DeleteUser(id: string) {
-  return defHttp.get({ url: Api.GetSystemUser + id + '/' });
+  return defHttp.delete({ url: Api.GetSystemUser + id + '/' });
 }
 export function GetDepartmentInfo(params) {
   return defHttp.get({ url: Api.GetSystemDepartment, params });

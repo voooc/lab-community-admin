@@ -28,6 +28,26 @@ export const bannerColumns: BasicColumn[] = [
     width: 150,
   },
   {
+    title: '排序值',
+    dataIndex: 'order',
+    width: 150,
+  },
+  {
+    title: '链接',
+    dataIndex: 'link',
+    width: 150,
+    customRender: ({ record }) => {
+      return h(
+        'a',
+        {
+          href: record['link'],
+          target: '_blank',
+        },
+        record['link'],
+      );
+    },
+  },
+  {
     title: '创建时间',
     dataIndex: 'add_time',
     width: 150,
@@ -59,6 +79,24 @@ export const bannerSchemas: FormSchema[] = [
       maxNumber: 1,
     },
     required: true,
+  },
+  {
+    field: 'order',
+    component: 'Input',
+    label: '排序值',
+    colProps: {
+      span: 24,
+    },
+    defaultValue: '',
+  },
+  {
+    field: 'link',
+    component: 'Input',
+    label: '链接',
+    colProps: {
+      span: 24,
+    },
+    defaultValue: '',
   },
 ];
 export const newsColumns: BasicColumn[] = [
@@ -100,6 +138,11 @@ export const newsColumns: BasicColumn[] = [
       ]);
     },
     width: 100,
+  },
+  {
+    title: '排序值',
+    dataIndex: 'order',
+    width: 150,
   },
   {
     title: '创建时间',

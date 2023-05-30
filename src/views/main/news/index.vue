@@ -46,6 +46,9 @@
       title: '操作',
       dataIndex: 'action',
     },
+    beforeFetch: (data) => {
+      return data;
+    },
   });
   const { createConfirm } = useMessage();
   function handleDelete(record: Recordable) {
@@ -64,8 +67,7 @@
     router.push({ path: '/main/news-edit' });
   }
   function handleRead(record: Recordable) {
-    console.log(record);
-    // router.push({ path: `/main/news-edit/${record.id}` });
+    window.open(record.url);
   }
   function handleEdit(record: Recordable) {
     router.push({ path: `/main/news-edit/${record.id}` });

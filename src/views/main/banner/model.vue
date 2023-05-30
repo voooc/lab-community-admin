@@ -38,6 +38,8 @@
     setFieldsValue({
       title: data.title,
       image: [data.image],
+      order: data.order,
+      link: data.link,
     });
   }
   async function handleSubmit() {

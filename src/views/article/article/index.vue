@@ -6,6 +6,11 @@
           <TableAction
             :actions="[
               {
+                label: '详情',
+                icon: 'ic:sharp-read-more',
+                onClick: handleRead.bind(null, record),
+              },
+              {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',
                 onClick: handleDelete.bind(null, record),
@@ -36,6 +41,9 @@
     },
   });
   const { createConfirm } = useMessage();
+  function handleRead(record: Recordable) {
+    window.open(record.url);
+  }
   function handleDelete(record: Recordable) {
     createConfirm({
       iconType: 'warning',
